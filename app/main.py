@@ -9,4 +9,4 @@ app.include_router(localizacao_controller.router)
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app.main:app", host="148.113.172.140", port=8080, reload=True)

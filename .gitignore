@@ -1,0 +1,57 @@
+# Ambiente virtual
+venv/
+
+# Arquivos de cache Python
+__pycache__/
+*.py[cod]
+
+# Arquivos de ambiente
+.env
+
+# Logs
+*.log
+
+# Arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de IDE/editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Arquivos de dependências
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Arquivos de distribuição/build
+dist/
+build/
+*.egg-info/
+
+# Arquivos de configuração local
+*.local
+
+# Arquivos temporários
+*.tmp
+*.bak
+*.swp
+*~
+
+# Arquivos de banco de dados
+*.sqlite3
+*.db
+
+# Arquivos de saída
+*.out
+
+# Arquivos de cobertura de testes
+.coverage
+htmlcov/
+
+# Arquivos de documentação gerados
+docs/_build/
+
+# Arquivos específicos do Docker
+.dockerignore
