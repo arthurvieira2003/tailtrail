@@ -1,7 +1,8 @@
-# localizacao_service.py
-
 def process_data(latitude: float, longitude: float) -> bool:
-    # Aqui você pode implementar qualquer lógica com os dados recebidos
+
+    if (latitude is None or longitude is None):
+        raise Exception("Latitude e longitude não podem ser nulos.")
+    
     print(f"Processando dados: Latitude = {latitude}, Longitude = {longitude}")
-    # Exemplo de processamento: Simulando um processamento bem-sucedido
+
     return True
