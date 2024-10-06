@@ -1,22 +1,21 @@
-# localizacao_controller.py
-
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 from app.services.localizacao_service import process_data
+from app.Messaging.Requests.GPSData import GPSData  
+import logging
 
 router = APIRouter()
-
-# Definindo um modelo de dados para a requisição (latitude e longitude)
-class GPSData(BaseModel):
-    lat: float
-    lng: float
+logger = logging.getLogger(__name__)
 
 @router.post("/dadosGPS")
 def process_request(data: GPSData) -> dict:
-    # Chama o service para processar os dados de GPS
-    success = process_data(data.lat, data.lng)
-    
-    if success:
-        return {"status": "sucesso", "mensagem": "Dados processados com sucesso!"}
-    else:
-        raise HTTPException(status_code=500, detail="Erro ao processar os dados")
+    try:
+        success = process_data(data.latitude, data.longitude)
+        if success:
+            logger.info("Dados processados com sucesso: %s", data)
+            return {"status": "sucesso", "mensagem": "Dados processados com sucesso!"}
+        else:
+            logger.error("Erro ao processar dados: %s", data)
+            raise HTTPException(status_code=500, detail="Erro ao processar os dados")
+    except Exception as e:
+        logger.exception("Exceção durante o processamento dos dados")
+        raise HTTPException(status_code=500, detail="Erro inesperado no servidor")
