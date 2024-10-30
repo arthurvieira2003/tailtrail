@@ -41,7 +41,6 @@ def deploy_to_portainer():
         "password": PORTAINER_PASSWORD
     }
     
-    # Desabilita a verificação SSL para o Portainer
     auth_response = requests.post(auth_url, json=auth_data, verify=False)
     if auth_response.status_code != 200:
         raise Exception(f"Erro na autenticação do Portainer: {auth_response.text}")
@@ -52,17 +51,40 @@ def deploy_to_portainer():
         "Content-Type": "application/json"
     }
 
+    # Verifica se existe um container com o mesmo nome
+    list_containers_url = f"{portainer_api_url}/endpoints/{ENDPOINT_ID}/docker/containers/json?all=true"
+    containers = requests.get(list_containers_url, headers=headers, verify=False).json()
+    
+    container_name = "tail-trail-app"
+    existing_container = next((c for c in containers if f"/{container_name}" in c["Names"]), None)
+    
+    if existing_container:
+        container_id = existing_container["Id"]
+        
+        # Para o container se estiver rodando
+        if existing_container["State"] == "running":
+            stop_url = f"{portainer_api_url}/endpoints/{ENDPOINT_ID}/docker/containers/{container_id}/stop"
+            stop_response = requests.post(stop_url, headers=headers, verify=False)
+            if stop_response.status_code not in [204, 304]:
+                raise Exception(f"Erro ao parar o container: {stop_response.text}")
+            print("Container antigo parado com sucesso.")
+        
+        # Remove o container
+        remove_url = f"{portainer_api_url}/endpoints/{ENDPOINT_ID}/docker/containers/{container_id}?force=true"
+        remove_response = requests.delete(remove_url, headers=headers, verify=False)
+        if remove_response.status_code not in [204, 404]:
+            raise Exception(f"Erro ao remover o container: {remove_response.text}")
+        print("Container antigo removido com sucesso.")
+
     # Configuração para pull da imagem
     image_name = f"{DOCKERHUB_USERNAME}/{IMAGE_NAME}:{IMAGE_TAG}"
-    pull_config = {
-        "fromImage": image_name
-    }
     
-    # Pull da imagem
+    # Pull da nova imagem
     pull_url = f"{portainer_api_url}/endpoints/{ENDPOINT_ID}/docker/images/create?fromImage={image_name}"
     pull_response = requests.post(pull_url, headers=headers, verify=False)
     if pull_response.status_code not in [200, 201]:
         raise Exception(f"Erro ao fazer pull da imagem: {pull_response.text}")
+    print("Nova imagem baixada com sucesso.")
 
     # Configuração do container
     container_config = {

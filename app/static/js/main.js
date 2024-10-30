@@ -37,22 +37,26 @@ function updateLocationsList() {
 }
 
 function updateMap(lat, lng) {
+  // Remove a animação de pulso do marcador anterior
+  if (markers.length > 0) {
+    const lastMarker = markers[markers.length - 1];
+    const lastEl = lastMarker.getElement();
+    if (lastEl) {
+      lastEl.querySelector(".marker-pulse").classList.add("static");
+    }
+  }
+
+  // Adiciona o novo marcador com pulso
   const marker = L.marker([lat, lng], {
     icon: L.divIcon({
       className: "custom-marker",
-      html: `<div class="marker-pulse"></div>`,
+      html: `<div class="marker-pulse active"></div>`,
       iconSize: [20, 20],
     }),
   }).addTo(map);
 
   markers.push(marker);
   map.setView([lat, lng], 13);
-
-  // Adiciona animação de pulso ao marcador
-  const el = marker.getElement();
-  if (el) {
-    el.style.animation = "markerPulse 1.5s ease-out";
-  }
 }
 
 // Inicialização

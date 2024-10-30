@@ -136,12 +136,24 @@ body {
 .marker-pulse {
   width: 20px;
   height: 20px;
-  background: var(--primary-color);
   border-radius: 50%;
   position: relative;
 }
 
-.marker-pulse::after {
+.marker-pulse.active {
+  background: var(--primary-color);
+}
+
+.marker-pulse.static {
+  background: #808080;
+  animation: none !important;
+}
+
+.marker-pulse.static::after {
+  display: none;
+}
+
+.marker-pulse.active::after {
   content: "";
   position: absolute;
   top: 0;
