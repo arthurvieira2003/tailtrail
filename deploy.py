@@ -31,8 +31,11 @@ def build_and_push_docker():
         raise Exception("Erro ao fazer push da imagem")
 
 def deploy_to_portainer():
+    # Adiciona /api na URL base do Portainer
+    portainer_api_url = f"{PORTAINER_URL}/api"
+    
     # Autenticação no Portainer
-    auth_url = f"{PORTAINER_URL}/auth"
+    auth_url = f"{portainer_api_url}/auth"
     auth_data = {
         "username": PORTAINER_USERNAME,
         "password": PORTAINER_PASSWORD
@@ -58,7 +61,7 @@ def deploy_to_portainer():
     }
 
     # Deploy do container (também desabilita verificação SSL)
-    deploy_url = f"{PORTAINER_URL}/endpoints/{ENDPOINT_ID}/docker/containers/create"
+    deploy_url = f"{portainer_api_url}/endpoints/{ENDPOINT_ID}/docker/containers/create"
     deploy_response = requests.post(deploy_url, headers=headers, json=container_config, verify=False)
     
     if deploy_response.status_code not in [200, 201]:
@@ -66,7 +69,7 @@ def deploy_to_portainer():
 
     # Iniciar o container (também desabilita verificação SSL)
     container_id = deploy_response.json()["Id"]
-    start_url = f"{PORTAINER_URL}/endpoints/{ENDPOINT_ID}/docker/containers/{container_id}/start"
+    start_url = f"{portainer_api_url}/endpoints/{ENDPOINT_ID}/docker/containers/{container_id}/start"
     start_response = requests.post(start_url, headers=headers, verify=False)
     
     if start_response.status_code not in [204, 200]:
