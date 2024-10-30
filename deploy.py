@@ -52,15 +52,36 @@ def deploy_to_portainer():
         "Content-Type": "application/json"
     }
 
+    # Configuração para pull da imagem
+    image_name = f"{DOCKERHUB_USERNAME}/{IMAGE_NAME}:{IMAGE_TAG}"
+    pull_config = {
+        "fromImage": image_name
+    }
+    
+    # Pull da imagem
+    pull_url = f"{portainer_api_url}/endpoints/{ENDPOINT_ID}/docker/images/create?fromImage={image_name}"
+    pull_response = requests.post(pull_url, headers=headers, verify=False)
+    if pull_response.status_code not in [200, 201]:
+        raise Exception(f"Erro ao fazer pull da imagem: {pull_response.text}")
+
     # Configuração do container
     container_config = {
         "name": "tail-trail-app",
-        "image": f"{DOCKERHUB_USERNAME}/{IMAGE_NAME}:{IMAGE_TAG}",
-        "ports": [{"host": 7070, "container": 7070}],
-        "restart_policy": "always"
+        "Image": image_name,  # Note o "I" maiúsculo aqui
+        "HostConfig": {
+            "PortBindings": {
+                "7070/tcp": [{"HostPort": "7070"}]
+            },
+            "RestartPolicy": {
+                "Name": "always"
+            }
+        },
+        "ExposedPorts": {
+            "7070/tcp": {}
+        }
     }
 
-    # Deploy do container (também desabilita verificação SSL)
+    # Deploy do container
     deploy_url = f"{portainer_api_url}/endpoints/{ENDPOINT_ID}/docker/containers/create"
     deploy_response = requests.post(deploy_url, headers=headers, json=container_config, verify=False)
     
