@@ -19,4 +19,4 @@ logger = logging.getLogger(__name__)
 if __name__ == "__main__":
     import uvicorn
     # Inicia o servidor Uvicorn, especificando o host e a porta
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8080, reload=True)
+    uvicorn.run("app.main:app", host="0.0.0.0", port=7070, reload=True)
