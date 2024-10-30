@@ -12,7 +12,7 @@ IMAGE_TAG = datetime.now().strftime("%Y%m%d_%H%M%S")
 PORTAINER_URL = os.getenv("PORTAINER_URL")
 PORTAINER_USERNAME = os.getenv("PORTAINER_USERNAME")
 PORTAINER_PASSWORD = os.getenv("PORTAINER_PASSWORD")
-ENDPOINT_ID = "1"  # Definindo um valor padrão para ENDPOINT_ID
+ENDPOINT_ID = "2"  # Definindo um valor padrão para ENDPOINT_ID
 
 def build_and_push_docker():
     # Build da imagem
