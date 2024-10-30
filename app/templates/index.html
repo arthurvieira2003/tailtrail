@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tail Trail - Monitoramento GPS</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-dark">
+      <div class="container">
+        <span class="navbar-brand mb-0 h1">
+          <i class="ri-map-pin-line me-2"></i> Tail Trail
+        </span>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header">
+              <h5><i class="ri-map-2-line me-2"></i>Mapa de Localização</h5>
+            </div>
+            <div class="card-body">
+              <div id="map"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h5>
+                <i class="ri-history-line me-2"></i>Histórico de Localizações
+              </h5>
+            </div>
+            <div class="card-body">
+              <div id="locations-list" class="locations-container"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/static/js/main.js"></script>
+  </body>
+</html>
