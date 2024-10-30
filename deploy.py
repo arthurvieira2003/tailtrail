@@ -38,9 +38,10 @@ def deploy_to_portainer():
         "password": PORTAINER_PASSWORD
     }
     
-    auth_response = requests.post(auth_url, json=auth_data)
+    # Desabilita a verificação SSL para o Portainer
+    auth_response = requests.post(auth_url, json=auth_data, verify=False)
     if auth_response.status_code != 200:
-        raise Exception("Erro na autenticação do Portainer")
+        raise Exception(f"Erro na autenticação do Portainer: {auth_response.text}")
     
     jwt_token = auth_response.json()["jwt"]
     headers = {
@@ -56,20 +57,20 @@ def deploy_to_portainer():
         "restart_policy": "always"
     }
 
-    # Deploy do container
+    # Deploy do container (também desabilita verificação SSL)
     deploy_url = f"{PORTAINER_URL}/endpoints/{ENDPOINT_ID}/docker/containers/create"
-    deploy_response = requests.post(deploy_url, headers=headers, json=container_config)
+    deploy_response = requests.post(deploy_url, headers=headers, json=container_config, verify=False)
     
     if deploy_response.status_code not in [200, 201]:
-        raise Exception("Erro ao criar container no Portainer")
+        raise Exception(f"Erro ao criar container no Portainer: {deploy_response.text}")
 
-    # Iniciar o container
+    # Iniciar o container (também desabilita verificação SSL)
     container_id = deploy_response.json()["Id"]
     start_url = f"{PORTAINER_URL}/endpoints/{ENDPOINT_ID}/docker/containers/{container_id}/start"
-    start_response = requests.post(start_url, headers=headers)
+    start_response = requests.post(start_url, headers=headers, verify=False)
     
     if start_response.status_code not in [204, 200]:
-        raise Exception("Erro ao iniciar o container")
+        raise Exception(f"Erro ao iniciar o container: {start_response.text}")
 
 def main():
     try:
