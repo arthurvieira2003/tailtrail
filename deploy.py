@@ -52,7 +52,7 @@ def deploy_to_portainer():
     }
 
     try:
-        # Lista todos os containers (incluindo os parados)
+        # Lista todos os containers
         list_containers_url = f"{portainer_api_url}/endpoints/{ENDPOINT_ID}/docker/containers/json?all=true"
         containers = requests.get(list_containers_url, headers=headers, verify=False).json()
         
@@ -62,26 +62,24 @@ def deploy_to_portainer():
         if existing_container:
             container_id = existing_container["Id"]
             
-            # Tenta parar o container se estiver rodando
-            if existing_container["State"] == "running":
-                print(f"Parando container {container_id[:12]}...")
-                stop_url = f"{portainer_api_url}/endpoints/{ENDPOINT_ID}/docker/containers/{container_id}/stop"
-                stop_response = requests.post(stop_url, headers=headers, verify=False)
-                if stop_response.status_code not in [204, 304]:
-                    print(f"Aviso: Não foi possível parar o container: {stop_response.text}")
+            # Força a parada do container
+            print(f"Forçando parada do container {container_id[:12]}...")
+            stop_url = f"{portainer_api_url}/endpoints/{ENDPOINT_ID}/docker/containers/{container_id}/stop?t=0"
+            requests.post(stop_url, headers=headers, verify=False)
             
-            # Aguarda um momento para garantir que o container foi parado
-            time.sleep(5)
+            # Aguarda um momento para garantir que o container parou
+            time.sleep(2)
             
-            # Remove o container antigo
-            print(f"Removendo container {container_id[:12]}...")
+            # Remove o container com força
+            print(f"Removendo container antigo {container_id[:12]}...")
             remove_url = f"{portainer_api_url}/endpoints/{ENDPOINT_ID}/docker/containers/{container_id}?force=true"
             remove_response = requests.delete(remove_url, headers=headers, verify=False)
-            if remove_response.status_code not in [204, 404]:
-                print(f"Aviso: Não foi possível remover o container: {remove_response.text}")
             
-            # Aguarda mais um momento para garantir que a porta foi liberada
-            time.sleep(5)
+            if remove_response.status_code not in [204, 404]:
+                raise Exception(f"Erro ao remover container: {remove_response.text}")
+            
+            # Aguarda mais um momento após a remoção
+            time.sleep(2)
 
         # Configuração para pull da imagem
         image_name = f"{DOCKERHUB_USERNAME}/{IMAGE_NAME}:{IMAGE_TAG}"
