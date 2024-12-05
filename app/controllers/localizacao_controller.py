@@ -18,32 +18,44 @@ async def process_gps_path(path: List[GPSData]):
     :return: Resposta JSON com resultados de processamento
     """
     try:
+        # Log da requisição recebida
+        logger.info(f"Requisição recebida - Body: {[{'latitude': p.latitude, 'longitude': p.longitude} for p in path]}")
+        
         # Processa o caminho
         result = process_data(path)
         
         # Determina o código de status baseado no resultado
         status_code = 200 if result.get('is_safe', False) else 400
         
+        # Prepara resposta
+        response_content = {
+            "message": "Caminho processado com sucesso" if result.get('is_safe', False) else "Caminho contém anomalias",
+            "processed": result.get('processed', False),
+            "is_safe": result.get('is_safe', False),
+            "total_points": result.get('total_points', 0),
+            "total_distance": result.get('total_distance', 0),
+            "safety_flags": result.get('safety_flags', {}),
+            "speeds": result.get('speeds', [])
+        }
+        
+        # Log da resposta
+        logger.info(f"Resposta enviada - Status: {status_code}, Content: {response_content}")
+        
         # Retorna resposta JSON
         return JSONResponse(
             status_code=status_code,
-            content={
-                "message": "Caminho processado com sucesso" if result.get('is_safe', False) else "Caminho contém anomalias",
-                "processed": result.get('processed', False),
-                "is_safe": result.get('is_safe', False),
-                "total_points": result.get('total_points', 0),
-                "total_distance": result.get('total_distance', 0),
-                "safety_flags": result.get('safety_flags', {}),
-                "speeds": result.get('speeds', [])
-            }
+            content=response_content
         )
     
     except Exception as e:
-        # Trata exceções não esperadas
+        error_response = {
+            "message": "Erro ao processar caminho",
+            "error": str(e)
+        }
+        # Log do erro
+        logger.error(f"Erro na requisição - {error_response}")
+        
         return JSONResponse(
             status_code=500,
-            content={
-                "message": "Erro ao processar caminho",
-                "error": str(e)
-            }
+            content=error_response
         )
